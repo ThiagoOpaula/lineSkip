@@ -14,7 +14,7 @@ COPY . .
 RUN cargo build --release
 
 # Stage 2: Run the Rust app
-FROM debian:buster-slim
+FROM ubuntu:22.04
 
 # Set the working directory
 WORKDIR /usr/src/app
