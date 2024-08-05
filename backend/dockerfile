@@ -20,10 +20,10 @@ FROM debian:buster-slim
 WORKDIR /usr/src/app
 
 # Copy the built application from the previous stage
-COPY --from=builder /usr/src/app/target/release/your-rust-app .
+COPY --from=builder /usr/src/app/target/release/lineskip-backend .
 
 # Expose the port your application will run on
 EXPOSE 8000
 
 # Run the Rust application
-CMD ["./your-rust-app"]
+CMD ["./lineskip-backend"]
