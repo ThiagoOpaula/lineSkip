@@ -7,6 +7,7 @@ edition = "2021"
 axum = "0.7.5"
 serde = "1.0.204"
 tokio = { version = "1.39.2", features = ["macros", "rt-multi-thread"] }
-
-[dev-dependencies]
 cargo-watch = "7.8.0"
+
+[lib]
+path = "src/lib.rs"

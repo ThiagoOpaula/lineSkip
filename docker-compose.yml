@@ -20,9 +20,9 @@ services:
       DATABASE_URL: postgres://lineskip_user:secretpassword@postgres:5432/lineskip_db
     depends_on:
       - postgres
+    command: ["cargo", "watch", "-x", "run"]
     ports:
       - "8000:8000"
-    command: cargo watch -x run
 
   frontend:
     build:

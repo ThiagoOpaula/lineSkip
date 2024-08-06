@@ -1,20 +1,17 @@
 # Stage 1: Build the Rust app
-FROM rust:1.80 AS builder
+FROM rust:1.80.0-bullseye as builder
 
 # Set the working directory
 WORKDIR /usr/src/app
 
-# Install required dependencies
-RUN apt-get update && apt-get install -y pkg-config libssl-dev
+# Copy the Cargo.toml and Cargo.lock first
+COPY Cargo.toml Cargo.lock ./
 
-# Copy the source code
-COPY . .
-
-# Build the Rust application in release mode
+# Build only the dependencies (this will cache them)
 RUN cargo build --release
 
 # Stage 2: Run the Rust app
-FROM ubuntu:22.04
+FROM debian:bookworm-slim
 
 # Set the working directory
 WORKDIR /usr/src/app
@@ -25,5 +22,9 @@ COPY --from=builder /usr/src/app/target/release/lineskip-backend .
 # Expose the port your application will run on
 EXPOSE 8000
 
-# Run the Rust application
-CMD ["./lineskip-backend"]
+
+# Run cargo with a watch command for development
+CMD ["cargo", "watch", "-x", "run"]
+
+# Run the compiled Rust binary, not cargo
+# CMD ["./lineskip-backend"]
