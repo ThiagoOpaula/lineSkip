@@ -25,9 +25,10 @@
 //     axum::serve(listener, app).await.unwrap();
 // }
 
-use axum::{response::IntoResponse, routing::get, Extension, Json, Router};
+use axum::{response::IntoResponse, Extension, Json, Router};
 
 pub mod db;
+mod handlers;
 mod routes;
 
 async fn health_checker_handler() -> impl IntoResponse {
