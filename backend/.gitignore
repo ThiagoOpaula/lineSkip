@@ -1,2 +1,4 @@
 # Ignore the target directory, where compiled files are stored
 /target
+/brunoapi_requests/lineskip/*
+/.env
