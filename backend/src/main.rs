@@ -25,26 +25,25 @@
 //     axum::serve(listener, app).await.unwrap();
 // }
 
-use axum::{response::IntoResponse, Extension, Json, Router};
+use axum::{response::IntoResponse, Extension, Json};
 
 pub mod db;
 mod handlers;
 mod routes;
 
-async fn health_checker_handler() -> impl IntoResponse {
-    const MESSAGE: &str = "Simple CRUD API with Rust, SQLX, Postgres,and Axum";
+// async fn health_checker_handler() -> impl IntoResponse {
+//     const MESSAGE: &str = "Simple CRUD API with Rust, SQLX, Postgres,and Axum";
 
-    let json_response = serde_json::json!({
-        "status": "success",
-        "message": MESSAGE
-    });
+//     let json_response = serde_json::json!({
+//         "status": "success",
+//         "message": MESSAGE
+//     });
 
-    Json(json_response)
-}
+//     Json(json_response)
+// }
 
 #[tokio::main]
 async fn main() {
-    //let app = Router::new().route("/api/healthchecker", get(health_checker_handler));
     let pool = db::connection::establish_connection().await;
     let app = routes::api::create_router().layer(Extension(pool));
 
