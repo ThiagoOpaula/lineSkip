@@ -5,6 +5,8 @@ This is a full-stack web application built using Next.js for the frontend and Ru
 
 ## Getting Started
 
+![schematic preview](readme-images/schema.excalidraw.png)
+
 ### Frontend
 
 1. Clone the repository and navigate to the `frontend` directory.
