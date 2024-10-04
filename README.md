@@ -5,7 +5,7 @@ This is a full-stack web application built using Next.js for the frontend and Ru
 
 ## Getting Started
 
-![schematic preview](readme-images/schema.excalidraw.png)
+![schematic preview](readme-images/schema.excalidraw.svg)
 
 ### Frontend
 
