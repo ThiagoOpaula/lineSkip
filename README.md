@@ -5,8 +5,6 @@ This is a full-stack web application built using Next.js for the frontend and Ru
 
 ## Getting Started
 
-![schematic preview](readme-images/schema.excalidraw.svg)
-
 ### Frontend
 
 1. Clone the repository and navigate to the `frontend` directory.
@@ -14,12 +12,16 @@ This is a full-stack web application built using Next.js for the frontend and Ru
 3. Start the development server with `npm run dev`.
 4. Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
 
+![schematic preview](readme-images/schema-frontend.excalidraw.svg)
+
 ### Backend
 
 1. Clone the repository and navigate to the `backend` directory.
 2. Run `cargo build` to build the Rust application.
 3. Start the backend server with `cargo run`.
 4. The backend API will be available at [http://localhost:8000/api](http://localhost:8000/api).
+
+![schematic preview](readme-images/schema-backend.excalidraw.svg)
 
 ## Database Setup with sqlx-cli
 
