@@ -26,6 +26,23 @@ This is a full-stack web application built using Next.js for the frontend and Ru
 
 ![schematic preview](readme-images/schema-backend.excalidraw.svg)
 
+## Bruno API
+
+The Bruno API is a collection of APIs used in the Lineskip application. It is defined in the backend/lineskip-api-collection/bruno.json file.
+
+### API Endpoints
+#### The Bruno API includes the following endpoints:
+
+Tickets: Create, read, update, and delete tickets
+
+Orders: Create, read, update, and delete orders
+
+Users: Create, read, update, and delete users 
+
+###  API Documentation 
+
+For more information about the Bruno API, including API documentation and usage examples, please see the [API documentation](https://docs.usebruno.com/introduction/what-is-bruno).
+
 ## Database Setup with sqlx-cli
 
 To interact with the PostgreSQL database, we use sqlx-cli. This tool allows us to easily manage our database schema and perform migrations.
