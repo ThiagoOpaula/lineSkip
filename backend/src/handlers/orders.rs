@@ -7,7 +7,7 @@ pub async fn create_order() -> Json<serde_json::Value> {
 }
 
 pub async fn get_orders() -> Json<serde_json::Value> {
-    Json(json!({ "orders": [] }))
+    Json(json!({ "orders": ["order1", "order2"] }))
 }
 
 pub async fn get_order() -> Json<serde_json::Value> {
