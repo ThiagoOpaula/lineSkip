@@ -2,7 +2,10 @@ use axum::Extension;
 
 pub mod db;
 mod handlers;
+mod models;
 mod routes;
+mod services;
+mod utils;
 
 #[tokio::main]
 async fn main() {

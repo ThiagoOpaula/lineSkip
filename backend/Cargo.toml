@@ -17,6 +17,7 @@ uuid = { version = "1.10.0", features = ["serde", "v4"] }
 rand = "0.8.5"
 rust-argon2 = "2.1.0"
 hyper = {version = "1.4.1" ,features = ["full"]}
+thiserror = "1.0.64"
 
 [dev-dependencies]
 cargo-watch = "8.5.3"
