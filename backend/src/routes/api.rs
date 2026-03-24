@@ -11,13 +11,25 @@ use crate::handlers::{
 
 pub fn create_router() -> Router {
     Router::new()
-        .route("/auth/login", post(login))
-        .route("/auth/register", post(register))
-        .route("/tickets", get(get_tickets).post(create_ticket))
-        .route(
-            "/tickets/:id",
-            get(get_ticket).put(update_ticket).delete(delete_ticket),
-        )
-        .route("/orders", post(create_order).get(get_orders))
-        .route("/orders/:id", get(get_order))
+        .nest("/auth", auth_routes())
+        .nest("/tickets", ticket_routes())
+        .nest("/orders", order_routes())
+}
+
+fn auth_routes() -> Router {
+    Router::new()
+        .route("/login", post(login))
+        .route("/register", post(register))
+}
+
+fn ticket_routes() -> Router {
+    Router::new()
+        .route("/", get(get_tickets).post(create_ticket))
+        .route("/:id", get(get_ticket).put(update_ticket).delete(delete_ticket))
+}
+
+fn order_routes() -> Router {
+    Router::new()
+        .route("/", post(create_order).get(get_orders))
+        .route("/:id", get(get_order))
 }

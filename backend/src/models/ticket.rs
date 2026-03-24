@@ -11,7 +11,12 @@ pub struct Ticket {
 }
 
 impl Ticket {
-    // Fetch a ticket by ID
+    pub async fn find_all(pool: &sqlx::PgPool) -> sqlx::Result<Vec<Ticket>> {
+        sqlx::query_as::<_, Ticket>("SELECT * FROM tickets ORDER BY created_at DESC")
+            .fetch_all(pool)
+            .await
+    }
+
     pub async fn find_by_id(pool: &sqlx::PgPool, ticket_id: i32) -> sqlx::Result<Option<Ticket>> {
         sqlx::query_as::<_, Ticket>("SELECT * FROM tickets WHERE id = $1")
             .bind(ticket_id)
@@ -19,7 +24,6 @@ impl Ticket {
             .await
     }
 
-    // Insert a new ticket into the database
     pub async fn create(
         pool: &sqlx::PgPool,
         user_id: i32,
@@ -34,5 +38,29 @@ impl Ticket {
         .bind(price)
         .fetch_one(pool)
         .await
+    }
+
+    pub async fn update(
+        pool: &sqlx::PgPool,
+        ticket_id: i32,
+        event_name: &str,
+        price: f64,
+    ) -> sqlx::Result<Option<Ticket>> {
+        sqlx::query_as::<_, Ticket>(
+            "UPDATE tickets SET event_name = $1, price = $2 WHERE id = $3 RETURNING *",
+        )
+        .bind(event_name)
+        .bind(price)
+        .bind(ticket_id)
+        .fetch_optional(pool)
+        .await
+    }
+
+    pub async fn delete(pool: &sqlx::PgPool, ticket_id: i32) -> sqlx::Result<u64> {
+        let result = sqlx::query("DELETE FROM tickets WHERE id = $1")
+            .bind(ticket_id)
+            .execute(pool)
+            .await?;
+        Ok(result.rows_affected())
     }
 }

@@ -28,7 +28,7 @@ impl User {
         email: &str,
     ) -> sqlx::Result<User> {
         sqlx::query_as::<_, User>(
-            "INSERT INTO users (username, password, email) VALUES ($1, $2, $3)",
+            "INSERT INTO users (username, password, email) VALUES ($1, $2, $3) RETURNING *",
         )
         .bind(username)
         .bind(password)

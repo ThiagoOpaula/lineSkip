@@ -11,7 +11,12 @@ pub struct Order {
 }
 
 impl Order {
-    // Fetch an order by ID
+    pub async fn find_all(pool: &sqlx::PgPool) -> sqlx::Result<Vec<Order>> {
+        sqlx::query_as::<_, Order>("SELECT * FROM orders ORDER BY created_at DESC")
+            .fetch_all(pool)
+            .await
+    }
+
     pub async fn find_by_id(pool: &sqlx::PgPool, order_id: i32) -> sqlx::Result<Option<Order>> {
         sqlx::query_as::<_, Order>("SELECT * FROM orders WHERE id = $1")
             .bind(order_id)
@@ -19,7 +24,6 @@ impl Order {
             .await
     }
 
-    // Insert a new order into the database
     pub async fn create(
         pool: &sqlx::PgPool,
         user_id: i32,
