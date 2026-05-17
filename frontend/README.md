@@ -1,4 +1,10 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# LineSkip Frontend
+
+This is the frontend for the LineSkip application, built with Next.js.
+
+## AI Development
+
+This project was developed using **Claude with Xiaomi Mimo-v2 models** for code generation and assistance.
 
 ## Getting Started
 
@@ -16,21 +22,61 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```
+frontend/
+├── src/
+│   ├── app/          # Next.js app directory
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   ├── globals.css
+│   │   ├── auth/      # Authentication pages
+│   │   ├── tickets/   # Tickets pages
+│   │   └── orders/    # Orders pages
+│   ├── components/    # React components
+│   │   ├── AuthForm.tsx
+│   │   ├── Navigation.tsx
+│   │   ├── TicketList.tsx
+│   │   ├── OrderList.tsx
+│   │   └── PaymentForm.tsx
+│   ├── store/         # Zustand state management
+│   │   └── useStore.ts
+│   └── lib/           # Utility functions
+│       └── api.ts
+├── public/           # Static assets
+├── package.json      # Dependencies
+└── tailwind.config.ts # Tailwind configuration
+```
 
-## Learn More
+## Features
 
-To learn more about Next.js, take a look at the following resources:
+- **User Authentication**: Login and registration with JWT tokens
+- **Ticket Browsing**: View available tickets with prices and details
+- **Ticket Purchasing**: Purchase tickets and generate QR codes
+- **Order Management**: View order history with QR code verification
+- **Payment Processing**: Secure payment integration (mock implementation)
+- **Responsive Design**: Mobile-friendly UI with Tailwind CSS
+- **State Management**: Zustand for client-side state
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## API Integration
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+The frontend communicates with the backend API at `http://localhost:8000/api`
 
-## Deploy on Vercel
+## Docker Setup
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Build and run with Docker:
+```bash
+docker-compose up --build
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Dependencies
+
+- next - React framework
+- react - UI library
+- tailwindcss - Utility-first CSS
+- typescript - Type safety
+- zustand - State management
+- axios - HTTP client
+- qrcode.react - QR code generation
+- lucide-react - Icons

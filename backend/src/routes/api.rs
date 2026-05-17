@@ -6,6 +6,7 @@ use axum::{
 use crate::handlers::{
     auth::{login, register},
     orders::{create_order, get_order, get_orders},
+    payment::process_payment,
     tickets::{create_ticket, delete_ticket, get_ticket, get_tickets, update_ticket},
 };
 
@@ -14,6 +15,7 @@ pub fn create_router() -> Router {
         .nest("/auth", auth_routes())
         .nest("/tickets", ticket_routes())
         .nest("/orders", order_routes())
+        .nest("/payment", payment_routes())
 }
 
 fn auth_routes() -> Router {
@@ -32,4 +34,9 @@ fn order_routes() -> Router {
     Router::new()
         .route("/", post(create_order).get(get_orders))
         .route("/:id", get(get_order))
+}
+
+fn payment_routes() -> Router {
+    Router::new()
+        .route("/process", post(process_payment))
 }

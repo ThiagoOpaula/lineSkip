@@ -2,3 +2,4 @@
 pub mod auth;
 pub mod orders;
 pub mod tickets;
+pub mod payment;

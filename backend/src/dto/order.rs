@@ -7,11 +7,12 @@ pub struct CreateOrderRequest {
     pub status: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct OrderResponse {
     pub id: i32,
     pub user_id: i32,
     pub ticket_id: i32,
     pub status: String,
     pub created_at: chrono::NaiveDateTime,
+    pub qr_code: Option<String>,
 }
