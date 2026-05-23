@@ -1,5 +1,37 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
+// Response types matching backend DTOs
+export interface UserResponse {
+  id: number;
+  username: string;
+  email: string;
+}
+
+export interface TicketResponse {
+  id: number;
+  user_id: number;
+  event_name: string;
+  price: number;
+  created_at: string;
+}
+
+export interface OrderResponse {
+  id: number;
+  user_id: number;
+  ticket_id: number;
+  status: string;
+  created_at: string;
+  qr_code: string | null;
+}
+
+export interface PaymentResponse {
+  payment_id: string;
+  status: string;
+  amount: number;
+  currency: string;
+  created_at: string;
+}
+
 export interface ApiResponse<T> {
   data: T;
   error?: string;
@@ -44,13 +76,13 @@ export async function apiRequest<T>(
 // Auth endpoints
 export const authApi = {
   login: (username: string, password: string) =>
-    apiRequest('/auth/login', {
+    apiRequest<UserResponse>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ username, password }),
     }),
 
   register: (username: string, password: string, email: string) =>
-    apiRequest('/auth/register', {
+    apiRequest<UserResponse>('/auth/register', {
       method: 'POST',
       body: JSON.stringify({ username, password, email }),
     }),
@@ -58,30 +90,30 @@ export const authApi = {
 
 // Ticket endpoints
 export const ticketsApi = {
-  getAll: () => apiRequest('/tickets'),
-  getById: (id: number) => apiRequest(`/tickets/${id}`),
+  getAll: () => apiRequest<TicketResponse[]>('/tickets'),
+  getById: (id: number) => apiRequest<TicketResponse>(`/tickets/${id}`),
   create: (data: { user_id: number; event_name: string; price: number }) =>
-    apiRequest('/tickets', {
+    apiRequest<TicketResponse>('/tickets', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
   update: (id: number, data: { event_name?: string; price?: number }) =>
-    apiRequest(`/tickets/${id}`, {
+    apiRequest<TicketResponse>(`/tickets/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     }),
   delete: (id: number) =>
-    apiRequest(`/tickets/${id}`, {
+    apiRequest<{ message: string }>(`/tickets/${id}`, {
       method: 'DELETE',
     }),
 };
 
 // Order endpoints
 export const ordersApi = {
-  getAll: () => apiRequest('/orders'),
-  getById: (id: number) => apiRequest(`/orders/${id}`),
+  getAll: () => apiRequest<OrderResponse[]>('/orders'),
+  getById: (id: number) => apiRequest<OrderResponse>(`/orders/${id}`),
   create: (data: { user_id: number; ticket_id: number; status: string }) =>
-    apiRequest('/orders', {
+    apiRequest<OrderResponse>('/orders', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
@@ -90,7 +122,7 @@ export const ordersApi = {
 // Payment endpoints
 export const paymentApi = {
   process: (data: { amount: number; currency: string; description: string; payment_method: string }) =>
-    apiRequest('/payment/process', {
+    apiRequest<PaymentResponse>('/payment/process', {
       method: 'POST',
       body: JSON.stringify(data),
     }),

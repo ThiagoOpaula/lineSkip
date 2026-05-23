@@ -44,10 +44,13 @@ export default function Navigation() {
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
               <>
-                <div className="flex items-center text-gray-600">
+                <a
+                  href="/orders"
+                  className="flex items-center text-gray-600 hover:text-blue-600"
+                >
                   <User className="w-4 h-4 mr-1" />
                   <span className="text-sm">{user?.username}</span>
-                </div>
+                </a>
                 <button
                   onClick={logout}
                   className="flex items-center text-gray-600 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium"

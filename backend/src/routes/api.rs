@@ -11,6 +11,10 @@ use crate::handlers::{
 };
 
 pub fn create_router() -> Router {
+    Router::new().nest("/api", api_routes())
+}
+
+fn api_routes() -> Router {
     Router::new()
         .nest("/auth", auth_routes())
         .nest("/tickets", ticket_routes())

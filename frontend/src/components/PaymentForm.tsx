@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useStore } from '@/store/useStore';
+import { paymentApi } from '@/lib/api';
 import { CreditCard } from 'lucide-react';
 
 interface PaymentFormProps {
@@ -25,23 +26,16 @@ export default function PaymentForm({ amount, onSuccess }: PaymentFormProps) {
     setIsProcessing(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/payment/process', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount,
-          currency: 'USD',
-          description: `Ticket purchase for ${user?.username}`,
-          payment_method: paymentMethod,
-        }),
+      const result = await paymentApi.process({
+        amount,
+        currency: 'USD',
+        description: `Ticket purchase for ${user?.username || 'guest'}`,
+        payment_method: paymentMethod,
       });
 
-      if (!response.ok) {
-        throw new Error('Payment failed');
-      }
+      if (result.error) throw new Error(result.error);
 
-      const result = await response.json();
-      console.log('Payment successful:', result);
+      console.log('Payment successful:', result.data);
       onSuccess();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Payment failed');

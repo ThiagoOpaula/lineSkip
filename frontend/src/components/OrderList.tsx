@@ -1,11 +1,13 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useStore } from '@/store/useStore';
 import { QrCode, Package } from 'lucide-react';
 
 export default function OrderList() {
-  const { orders, fetchOrders, selectOrder, isLoading, user } = useStore();
+  const router = useRouter();
+  const { orders, fetchOrders, isLoading, user } = useStore();
 
   useEffect(() => {
     if (user) {
@@ -71,7 +73,7 @@ export default function OrderList() {
 
               <div className="mt-4">
                 <button
-                  onClick={() => selectOrder(order)}
+                  onClick={() => router.push(`/orders/${order.id}`)}
                   className="w-full py-2 px-4 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200"
                 >
                   View Details

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { authApi, ticketsApi, ordersApi } from '@/lib/api';
 
 interface User {
   id: number;
@@ -21,7 +22,7 @@ interface Order {
   ticket_id: number;
   status: string;
   created_at: string;
-  qr_code?: string;
+  qr_code: string | null;
 }
 
 interface StoreState {
@@ -53,13 +54,11 @@ interface StoreState {
 
   fetchOrders: () => Promise<void>;
   selectOrder: (order: Order | null) => void;
-  createOrder: (ticket_id: number) => Promise<void>;
+  createOrder: (ticket_id: number) => Promise<Order>;
 
   setError: (error: string | null) => void;
   clearError: () => void;
 }
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
 
 export const useStore = create<StoreState>()(
   persist(
@@ -80,20 +79,11 @@ export const useStore = create<StoreState>()(
       login: async (username: string, password: string) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await fetch(`${API_BASE_URL}/auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password }),
-          });
-
-          if (!response.ok) {
-            throw new Error('Login failed');
-          }
-
-          const user = await response.json();
-          set({ user, isAuthenticated: true, isLoading: false });
+          const result = await authApi.login(username, password);
+          if (result.error) throw new Error(result.error);
+          set({ user: result.data, isAuthenticated: true, isLoading: false });
         } catch (error) {
-          set({ error: 'Login failed', isLoading: false });
+          set({ error: error instanceof Error ? error.message : 'Login failed', isLoading: false });
           throw error;
         }
       },
@@ -101,20 +91,11 @@ export const useStore = create<StoreState>()(
       register: async (username: string, password: string, email: string) => {
         set({ isLoading: true, error: null });
         try {
-          const response = await fetch(`${API_BASE_URL}/auth/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password, email }),
-          });
-
-          if (!response.ok) {
-            throw new Error('Registration failed');
-          }
-
-          const user = await response.json();
-          set({ user, isAuthenticated: true, isLoading: false });
+          const result = await authApi.register(username, password, email);
+          if (result.error) throw new Error(result.error);
+          set({ user: result.data, isAuthenticated: true, isLoading: false });
         } catch (error) {
-          set({ error: 'Registration failed', isLoading: false });
+          set({ error: error instanceof Error ? error.message : 'Registration failed', isLoading: false });
           throw error;
         }
       },
@@ -127,10 +108,9 @@ export const useStore = create<StoreState>()(
       fetchTickets: async () => {
         set({ isLoading: true, error: null });
         try {
-          const response = await fetch(`${API_BASE_URL}/tickets`);
-          if (!response.ok) throw new Error('Failed to fetch tickets');
-          const tickets = await response.json();
-          set({ tickets, isLoading: false });
+          const result = await ticketsApi.getAll();
+          if (result.error) throw new Error(result.error);
+          set({ tickets: result.data || [], isLoading: false });
         } catch (error) {
           set({ error: 'Failed to fetch tickets', isLoading: false });
         }
@@ -144,15 +124,9 @@ export const useStore = create<StoreState>()(
 
         set({ isLoading: true, error: null });
         try {
-          const response = await fetch(`${API_BASE_URL}/tickets`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: user.id, event_name, price }),
-          });
-
-          if (!response.ok) throw new Error('Failed to create ticket');
-          const ticket = await response.json();
-          set({ tickets: [...get().tickets, ticket], isLoading: false });
+          const result = await ticketsApi.create({ user_id: user.id, event_name, price });
+          if (result.error) throw new Error(result.error);
+          set({ tickets: [...get().tickets, result.data], isLoading: false });
         } catch (error) {
           set({ error: 'Failed to create ticket', isLoading: false });
           throw error;
@@ -163,10 +137,9 @@ export const useStore = create<StoreState>()(
       fetchOrders: async () => {
         set({ isLoading: true, error: null });
         try {
-          const response = await fetch(`${API_BASE_URL}/orders`);
-          if (!response.ok) throw new Error('Failed to fetch orders');
-          const orders = await response.json();
-          set({ orders, isLoading: false });
+          const result = await ordersApi.getAll();
+          if (result.error) throw new Error(result.error);
+          set({ orders: result.data || [], isLoading: false });
         } catch (error) {
           set({ error: 'Failed to fetch orders', isLoading: false });
         }
@@ -180,15 +153,11 @@ export const useStore = create<StoreState>()(
 
         set({ isLoading: true, error: null });
         try {
-          const response = await fetch(`${API_BASE_URL}/orders`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: user.id, ticket_id, status: 'pending' }),
-          });
-
-          if (!response.ok) throw new Error('Failed to create order');
-          const order = await response.json();
-          set({ orders: [...get().orders, order], isLoading: false });
+          const result = await ordersApi.create({ user_id: user.id, ticket_id, status: 'pending' });
+          if (result.error) throw new Error(result.error);
+          const orders = [...get().orders, result.data];
+          set({ orders, isLoading: false });
+          return result.data;
         } catch (error) {
           set({ error: 'Failed to create order', isLoading: false });
           throw error;

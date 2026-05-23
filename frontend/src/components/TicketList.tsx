@@ -1,28 +1,24 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useStore } from '@/store/useStore';
 import { Ticket } from 'lucide-react';
 
 export default function TicketList() {
-  const { tickets, fetchTickets, selectTicket, createOrder, isLoading, user } = useStore();
+  const router = useRouter();
+  const { tickets, fetchTickets, isLoading, user } = useStore();
 
   useEffect(() => {
     fetchTickets();
   }, [fetchTickets]);
 
-  const handlePurchase = async (ticketId: number) => {
+  const handlePurchase = (ticketId: number) => {
     if (!user) {
-      alert('Please login to purchase tickets');
+      router.push(`/auth?redirect=/tickets/${ticketId}`);
       return;
     }
-
-    try {
-      await createOrder(ticketId);
-      alert('Ticket purchased successfully!');
-    } catch (error) {
-      alert('Failed to purchase ticket');
-    }
+    router.push(`/tickets/${ticketId}`);
   };
 
   return (
@@ -56,7 +52,7 @@ export default function TicketList() {
 
               <div className="flex gap-2">
                 <button
-                  onClick={() => selectTicket(ticket)}
+                  onClick={() => router.push(`/tickets/${ticket.id}`)}
                   className="flex-1 py-2 px-4 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
                 >
                   View Details
@@ -65,7 +61,7 @@ export default function TicketList() {
                   onClick={() => handlePurchase(ticket.id)}
                   className="flex-1 py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                 >
-                  Purchase
+                  {user ? 'Purchase' : 'Login to Buy'}
                 </button>
               </div>
             </div>

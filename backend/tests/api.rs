@@ -30,7 +30,7 @@ async fn test_auth_login_missing_extension() {
         .oneshot(
             Request::builder()
                 .method("POST")
-                .uri("/auth/login")
+                .uri("/api/auth/login")
                 .header("content-type", "application/json")
                 .body(Body::from(r#"{}"#))
                 .unwrap(),
@@ -47,7 +47,7 @@ async fn test_tickets_get_all() {
     let response = app
         .oneshot(
             Request::builder()
-                .uri("/tickets")
+                .uri("/api/tickets")
                 .body(Body::empty())
                 .unwrap(),
         )
@@ -64,7 +64,7 @@ async fn test_tickets_create_missing_extension() {
         .oneshot(
             Request::builder()
                 .method("POST")
-                .uri("/tickets")
+                .uri("/api/tickets")
                 .header("content-type", "application/json")
                 .body(Body::from(r#"{"user_id": "not-a-number"}"#))
                 .unwrap(),
@@ -81,7 +81,7 @@ async fn test_tickets_get_by_id_missing_extension() {
     let response = app
         .oneshot(
             Request::builder()
-                .uri("/tickets/abc")
+                .uri("/api/tickets/abc")
                 .body(Body::empty())
                 .unwrap(),
         )
@@ -98,7 +98,7 @@ async fn test_orders_create_missing_extension() {
         .oneshot(
             Request::builder()
                 .method("POST")
-                .uri("/orders")
+                .uri("/api/orders")
                 .header("content-type", "application/json")
                 .body(Body::from(r#"{"ticket_id": 1}"#))
                 .unwrap(),
@@ -115,7 +115,7 @@ async fn test_payment_process_empty_body() {
         .oneshot(
             Request::builder()
                 .method("POST")
-                .uri("/payment/process")
+                .uri("/api/payment/process")
                 .header("content-type", "application/json")
                 .body(Body::from(r#"{}"#))
                 .unwrap(),
@@ -156,7 +156,7 @@ async fn integration_full_payment_flow() {
         .oneshot(
             Request::builder()
                 .method("POST")
-                .uri("/auth/register")
+                .uri("/api/auth/register")
                 .header("content-type", "application/json")
                 .body(Body::from(serde_json::to_string(&register_body).unwrap()))
                 .unwrap(),
