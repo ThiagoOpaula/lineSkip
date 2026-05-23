@@ -69,3 +69,92 @@ impl PaymentService {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn valid_payment_data() -> PaymentData {
+        PaymentData {
+            amount: 100.0,
+            currency: "USD".to_string(),
+            description: "Test payment".to_string(),
+            payment_method: "credit_card".to_string(),
+        }
+    }
+
+    #[test]
+    fn test_validate_payment_valid() {
+        let data = valid_payment_data();
+        assert!(PaymentService::validate_payment(&data).is_ok());
+    }
+
+    #[test]
+    fn test_validate_payment_zero_amount() {
+        let data = PaymentData {
+            amount: 0.0,
+            ..valid_payment_data()
+        };
+        let err = PaymentService::validate_payment(&data).unwrap_err();
+        assert!(matches!(err, PaymentError::InvalidAmount));
+    }
+
+    #[test]
+    fn test_validate_payment_negative_amount() {
+        let data = PaymentData {
+            amount: -50.0,
+            ..valid_payment_data()
+        };
+        let err = PaymentService::validate_payment(&data).unwrap_err();
+        assert!(matches!(err, PaymentError::InvalidAmount));
+    }
+
+    #[test]
+    fn test_validate_payment_empty_currency() {
+        let data = PaymentData {
+            currency: String::new(),
+            ..valid_payment_data()
+        };
+        let err = PaymentService::validate_payment(&data).unwrap_err();
+        assert!(matches!(err, PaymentError::Failed(_)));
+    }
+
+    #[tokio::test]
+    async fn test_process_payment_valid() {
+        let data = valid_payment_data();
+        let result = PaymentService::process_payment(data).await;
+        assert!(result.is_ok());
+
+        let response = result.unwrap();
+        assert!(response.payment_id.starts_with("pay_"));
+        assert_eq!(response.status, "completed");
+        assert_eq!(response.amount, 100.0);
+        assert_eq!(response.currency, "USD");
+    }
+
+    #[tokio::test]
+    async fn test_process_payment_invalid_amount() {
+        let data = PaymentData {
+            amount: 0.0,
+            ..valid_payment_data()
+        };
+        let err = PaymentService::process_payment(data).await.unwrap_err();
+        assert!(matches!(err, PaymentError::InvalidAmount));
+    }
+
+    #[test]
+    fn test_payment_error_display() {
+        assert_eq!(
+            PaymentError::InvalidAmount.to_string(),
+            "Invalid payment amount"
+        );
+        assert_eq!(
+            PaymentError::Failed("timeout".to_string()).to_string(),
+            "Payment failed: timeout"
+        );
+        assert_eq!(
+            PaymentError::AlreadyProcessed.to_string(),
+            "Payment already processed"
+        );
+    }
+}

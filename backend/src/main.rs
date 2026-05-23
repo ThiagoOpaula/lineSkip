@@ -1,17 +1,8 @@
 use axum::Extension;
+use lineskip_backend::{db, routes, state};
 use tower_http::trace::{self, TraceLayer};
 use tracing::Level;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
-
-mod db;
-mod dto;
-mod errors;
-mod handlers;
-mod models;
-mod routes;
-mod services;
-mod state;
-mod utils;
 
 #[tokio::main]
 async fn main() {
@@ -25,7 +16,7 @@ async fn main() {
         .init();
 
     let pool = db::connection::establish_connection().await;
-    let app_state = state::AppState::new(pool);
+    let app_state = state::AppState::new(pool).await;
     let app = routes::api::create_router()
         .layer(Extension(app_state))
         .layer(

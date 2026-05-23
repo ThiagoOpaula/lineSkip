@@ -8,8 +8,10 @@ pub struct AppState {
 }
 
 impl AppState {
-    pub fn new(db: PgPool) -> Self {
-        let cache = CacheService::new().expect("Failed to initialize cache service");
+    pub async fn new(db: PgPool) -> Self {
+        let cache = CacheService::new()
+            .await
+            .expect("Failed to initialize cache service");
         Self { db, cache }
     }
 }

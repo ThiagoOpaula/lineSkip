@@ -28,7 +28,7 @@ pub async fn create_order(
         "qr_code": qr_code,
     });
 
-    if let Err(e) = state.cache.cache_order(order.id, &order_data) {
+    if let Err(e) = state.cache.cache_order(order.id, &order_data).await {
         log::warn!("Failed to cache order {}: {}", order.id, e);
     }
 
@@ -47,7 +47,7 @@ pub async fn get_order(
     Path(id): Path<i32>,
 ) -> Result<Json<OrderResponse>, ApiError> {
     // Try to get from cache first
-    if let Ok(Some(cached)) = state.cache.get_cached_order(id) {
+    if let Ok(Some(cached)) = state.cache.get_cached_order(id).await {
         let order_response: OrderResponse = serde_json::from_value(cached)
             .map_err(|e| ApiError::Internal(format!("Failed to parse cached order: {}", e)))?;
         return Ok(Json(order_response));

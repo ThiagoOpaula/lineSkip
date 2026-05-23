@@ -55,3 +55,69 @@ impl QrService {
         Self::generate_qr_code(&data)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_generate_qr_code_success() {
+        let result = QrService::generate_qr_code("hello-world");
+        assert!(result.is_ok());
+
+        let qr = result.unwrap();
+        assert!(qr.starts_with("data:image/png;base64,"),
+            "QR output should be a base64 data URL");
+        assert!(qr.len() > 100, "QR data URL should be substantial");
+    }
+
+    #[test]
+    fn test_generate_qr_code_empty_data() {
+        let err = QrService::generate_qr_code("").unwrap_err();
+        assert!(matches!(err, QrError::InvalidData));
+    }
+
+    #[test]
+    fn test_generate_qr_code_long_data() {
+        let long_data = "A".repeat(1000);
+        let result = QrService::generate_qr_code(&long_data);
+        assert!(result.is_ok(), "should handle long data");
+    }
+
+    #[test]
+    fn test_generate_order_qr() {
+        let result = QrService::generate_order_qr(42, 7);
+        assert!(result.is_ok());
+
+        let qr = result.unwrap();
+        assert!(qr.starts_with("data:image/png;base64,"));
+    }
+
+    #[test]
+    fn test_generate_ticket_qr() {
+        let result = QrService::generate_ticket_qr(100, 50);
+        assert!(result.is_ok());
+
+        let qr = result.unwrap();
+        assert!(qr.starts_with("data:image/png;base64,"));
+    }
+
+    #[test]
+    fn test_order_and_ticket_qr_differ() {
+        let order_qr = QrService::generate_order_qr(1, 1).unwrap();
+        let ticket_qr = QrService::generate_ticket_qr(1, 1).unwrap();
+        assert_ne!(order_qr, ticket_qr, "different data should produce different QR codes");
+    }
+
+    #[test]
+    fn test_qr_error_display() {
+        assert_eq!(
+            QrError::GenerationFailed("oops".to_string()).to_string(),
+            "QR code generation failed: oops"
+        );
+        assert_eq!(
+            QrError::InvalidData.to_string(),
+            "Invalid data"
+        );
+    }
+}
