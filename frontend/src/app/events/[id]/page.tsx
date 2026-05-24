@@ -4,11 +4,13 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { eventsApi, EventResponse } from '@/lib/api';
 import { useStore } from '@/store/useStore';
+import { useTranslation } from 'react-i18next';
 import { Calendar, ArrowLeft, ShoppingCart, LogIn } from 'lucide-react';
 
 export default function EventDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { t } = useTranslation();
   const { user, isAuthenticated, createOrderForEvent } = useStore();
   const [event, setEvent] = useState<EventResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -45,7 +47,7 @@ export default function EventDetailPage() {
   };
 
   const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('en-US', {
+    return new Date(dateStr).toLocaleDateString(undefined, {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -57,63 +59,63 @@ export default function EventDetailPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-2xl mx-auto px-4 text-center py-16">Loading event...</div>
+      <main className="min-h-screen bg-gray-50 dark:bg-gray-950 py-8">
+        <div className="max-w-2xl mx-auto px-4 text-center py-16 text-gray-500 dark:text-gray-400">{t('common.loading')}</div>
       </main>
     );
   }
 
   if (error || !event) {
     return (
-      <main className="min-h-screen bg-gray-50 py-8">
+      <main className="min-h-screen bg-gray-50 dark:bg-gray-950 py-8">
         <div className="max-w-2xl mx-auto px-4 text-center py-16">
-          <p className="text-red-600 mb-4">{error || 'Event not found'}</p>
-          <a href="/events" className="text-blue-600 hover:underline">&larr; Back to events</a>
+          <p className="text-red-600 dark:text-red-400 mb-4">{error || t('common.error')}</p>
+          <a href="/events" className="text-blue-600 dark:text-blue-400 hover:underline">{t('events.backToEvents')}</a>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 py-8">
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-950 py-8">
       <div className="max-w-2xl mx-auto px-4">
         <a
           href="/events"
-          className="inline-flex items-center text-gray-600 hover:text-blue-600 mb-6"
+          className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 mb-6 transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-1" />
-          Back to events
+          {t('events.backToEvents')}
         </a>
 
-        <div className="bg-white rounded-lg shadow-md p-8">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900/30 p-8 border border-gray-200 dark:border-gray-700">
           <div className="flex items-start mb-6">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
-              <Calendar className="w-6 h-6 text-blue-600" />
+            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+              <Calendar className="w-6 h-6 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">{event.name}</h1>
-              <p className="text-gray-500 text-sm">Event #{event.id}</p>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{event.name}</h1>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">{t('events.eventId')} #{event.id}</p>
             </div>
           </div>
 
           {event.description && (
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-              <p className="text-gray-700">{event.description}</p>
+            <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
+              <p className="text-gray-700 dark:text-gray-300">{event.description}</p>
             </div>
           )}
 
-          <div className="border-t border-gray-200 pt-6 space-y-4">
-            <div className="flex justify-between items-center py-3 border-b border-gray-100">
-              <span className="text-gray-600">Date & Time</span>
-              <span className="text-gray-900 font-medium">{formatDate(event.date)}</span>
+          <div className="border-t border-gray-200 dark:border-gray-700 pt-6 space-y-4">
+            <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
+              <span className="text-gray-600 dark:text-gray-400">{t('events.dateTime')}</span>
+              <span className="text-gray-900 dark:text-gray-100 font-medium">{formatDate(event.date)}</span>
             </div>
-            <div className="flex justify-between items-center py-3 border-b border-gray-100">
-              <span className="text-gray-600">Price</span>
-              <span className="text-2xl font-bold text-blue-600">${event.price.toFixed(2)}</span>
+            <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
+              <span className="text-gray-600 dark:text-gray-400">{t('events.price')}</span>
+              <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">${event.price.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between items-center py-3 border-b border-gray-100">
-              <span className="text-gray-600">Available Tickets</span>
-              <span className="text-gray-900">{event.total_tickets}</span>
+            <div className="flex justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700">
+              <span className="text-gray-600 dark:text-gray-400">{t('events.availableTickets')}</span>
+              <span className="text-gray-900 dark:text-gray-100 font-medium">{event.total_tickets}</span>
             </div>
           </div>
 
@@ -122,18 +124,18 @@ export default function EventDetailPage() {
               <button
                 onClick={handlePurchase}
                 disabled={purchasing}
-                className="w-full py-3 px-6 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2 text-lg font-medium"
+                className="w-full py-3 px-6 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2 text-lg font-medium transition-colors"
               >
                 <ShoppingCart className="w-5 h-5" />
-                {purchasing ? 'Processing...' : `Purchase for $${event.price.toFixed(2)}`}
+                {purchasing ? t('common.processing') : `${t('events.purchase')} $${event.price.toFixed(2)}`}
               </button>
             ) : (
               <a
                 href={`/auth?redirect=/events/${eventId}`}
-                className="block w-full py-3 px-6 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-center flex items-center justify-center gap-2 text-lg font-medium"
+                className="block w-full py-3 px-6 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 text-center flex items-center justify-center gap-2 text-lg font-medium transition-colors"
               >
                 <LogIn className="w-5 h-5" />
-                Login to Purchase
+                {t('events.loginToPurchase')}
               </a>
             )}
           </div>

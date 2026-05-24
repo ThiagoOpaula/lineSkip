@@ -3,12 +3,14 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ordersApi, ticketsApi, OrderResponse } from '@/lib/api';
+import { useTranslation } from 'react-i18next';
 import PaymentForm from '@/components/PaymentForm';
 import { ArrowLeft } from 'lucide-react';
 
 export default function PaymentPage() {
   const params = useParams();
   const router = useRouter();
+  const { t } = useTranslation();
   const [order, setOrder] = useState<OrderResponse | null>(null);
   const [price, setPrice] = useState<number>(0);
   const [loading, setLoading] = useState(true);
@@ -57,19 +59,19 @@ export default function PaymentPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-md mx-auto px-4 text-center py-16">Loading payment details...</div>
+      <main className="min-h-screen bg-gray-50 dark:bg-gray-950 py-8">
+        <div className="max-w-md mx-auto px-4 text-center py-16 text-gray-500 dark:text-gray-400">{t('common.loading')}</div>
       </main>
     );
   }
 
   if (error) {
     return (
-      <main className="min-h-screen bg-gray-50 py-8">
+      <main className="min-h-screen bg-gray-50 dark:bg-gray-950 py-8">
         <div className="max-w-md mx-auto px-4 text-center py-16">
-          <p className="text-red-600 mb-4">{error}</p>
-          <a href={`/orders/${orderId}`} className="text-blue-600 hover:underline">
-            &larr; Back to order
+          <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>
+          <a href={`/orders/${orderId}`} className="text-blue-600 dark:text-blue-400 hover:underline">
+            {t('common.back')}
           </a>
         </div>
       </main>
@@ -77,14 +79,14 @@ export default function PaymentPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 py-8">
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-950 py-8">
       <div className="max-w-md mx-auto px-4">
         <a
           href={`/orders/${orderId}`}
-          className="inline-flex items-center text-gray-600 hover:text-blue-600 mb-6"
+          className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 mb-6 transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-1" />
-          Back to order
+          {t('common.back')}
         </a>
 
         <PaymentForm amount={price} onSuccess={handleSuccess} />
