@@ -19,6 +19,7 @@ async fn main() {
         .init();
 
     let pool = db::connection::establish_connection().await;
+    sqlx::migrate!().run(&pool).await.expect("Failed to run database migrations");
     let app_state = state::AppState::new(pool).await;
     let cors = if let Ok(frontend_url) = env::var("FRONTEND_URL") {
         CorsLayer::new()

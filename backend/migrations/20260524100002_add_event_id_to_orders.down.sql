@@ -1,0 +1,2 @@
+ALTER TABLE orders ALTER COLUMN ticket_id SET NOT NULL;
+ALTER TABLE orders DROP COLUMN event_id;

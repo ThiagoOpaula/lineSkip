@@ -15,11 +15,14 @@ export interface TicketResponse {
   created_at: string;
 }
 
+export type OrderStatus = 'pending' | 'completed' | 'cancelled' | 'refunded';
+
 export interface OrderResponse {
   id: number;
   user_id: number;
-  ticket_id: number;
-  status: string;
+  ticket_id: number | null;
+  event_id: number | null;
+  status: OrderStatus;
   created_at: string;
   qr_code: string | null;
 }
@@ -108,11 +111,26 @@ export const ticketsApi = {
     }),
 };
 
+export interface EventResponse {
+  id: number;
+  name: string;
+  description: string | null;
+  date: string;
+  price: number;
+  total_tickets: number;
+  created_at: string;
+}
+
+export const eventsApi = {
+  getAll: () => apiRequest<EventResponse[]>('/events'),
+  getById: (id: number) => apiRequest<EventResponse>(`/events/${id}`),
+};
+
 // Order endpoints
 export const ordersApi = {
   getAll: () => apiRequest<OrderResponse[]>('/orders'),
   getById: (id: number) => apiRequest<OrderResponse>(`/orders/${id}`),
-  create: (data: { user_id: number; ticket_id: number; status: string }) =>
+  create: (data: { user_id: number; ticket_id?: number; event_id?: number; status: OrderStatus }) =>
     apiRequest<OrderResponse>('/orders', {
       method: 'POST',
       body: JSON.stringify(data),

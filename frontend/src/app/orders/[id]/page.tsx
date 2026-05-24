@@ -135,10 +135,10 @@ export default function OrderDetailPage() {
               </button>
             )}
             <a
-              href="/tickets"
+              href="/events"
               className="block w-full py-3 px-6 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-center"
             >
-              Browse More Tickets
+              Browse More Events
             </a>
           </div>
         </div>

@@ -109,6 +109,55 @@ async fn test_orders_create_missing_extension() {
 }
 
 #[tokio::test]
+async fn test_events_get_all() {
+    let app = build_app();
+    let response = app
+        .oneshot(
+            Request::builder()
+                .uri("/api/events")
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::INTERNAL_SERVER_ERROR);
+}
+
+#[tokio::test]
+async fn test_events_get_by_id() {
+    let app = build_app();
+    let response = app
+        .oneshot(
+            Request::builder()
+                .uri("/api/events/1")
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::INTERNAL_SERVER_ERROR);
+}
+
+#[tokio::test]
+async fn test_events_create_missing_extension() {
+    let app = build_app();
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method("POST")
+                .uri("/api/events")
+                .header("content-type", "application/json")
+                .body(Body::from(
+                    r#"{"name": "Test", "date": "2026-07-01T00:00:00Z", "price": 10.0, "total_tickets": 100}"#,
+                ))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::INTERNAL_SERVER_ERROR);
+}
+
+#[tokio::test]
 async fn test_payment_process_empty_body() {
     let app = build_app();
     let response = app

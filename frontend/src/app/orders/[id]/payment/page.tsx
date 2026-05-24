@@ -33,7 +33,13 @@ export default function PaymentPage() {
         return;
       }
 
-      const ticketResult = await ticketsApi.getById(orderResult.data.ticket_id);
+      const ticketId = orderResult.data.ticket_id;
+      if (!ticketId) {
+        setError('This order does not have a linked ticket');
+        setLoading(false);
+        return;
+      }
+      const ticketResult = await ticketsApi.getById(ticketId);
       if (ticketResult.error) {
         setError('Could not load ticket details');
         setLoading(false);

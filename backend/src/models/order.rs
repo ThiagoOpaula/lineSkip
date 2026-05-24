@@ -1,12 +1,15 @@
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
+use super::order_status::OrderStatus;
+
 #[derive(Serialize, Deserialize, FromRow)]
 pub struct Order {
     pub id: i32,
     pub user_id: i32,
-    pub ticket_id: i32,
-    pub status: String,
+    pub ticket_id: Option<i32>,
+    pub event_id: Option<i32>,
+    pub status: OrderStatus,
     pub created_at: chrono::NaiveDateTime,
 }
 
@@ -27,14 +30,16 @@ impl Order {
     pub async fn create(
         pool: &sqlx::PgPool,
         user_id: i32,
-        ticket_id: i32,
-        status: &str,
+        ticket_id: Option<i32>,
+        event_id: Option<i32>,
+        status: &OrderStatus,
     ) -> sqlx::Result<Order> {
         sqlx::query_as::<_, Order>(
-            "INSERT INTO orders (user_id, ticket_id, status) VALUES ($1, $2, $3) RETURNING *",
+            "INSERT INTO orders (user_id, ticket_id, event_id, status) VALUES ($1, $2, $3, $4) RETURNING *",
         )
         .bind(user_id)
         .bind(ticket_id)
+        .bind(event_id)
         .bind(status)
         .fetch_one(pool)
         .await

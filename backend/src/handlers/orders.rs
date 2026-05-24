@@ -11,8 +11,20 @@ pub async fn create_order(
     Extension(state): Extension<AppState>,
     Json(data): Json<CreateOrderRequest>,
 ) -> Result<Json<OrderResponse>, ApiError> {
-    let order =
-        Order::create(&state.db, data.user_id, data.ticket_id, &data.status).await?;
+    if data.ticket_id.is_none() && data.event_id.is_none() {
+        return Err(ApiError::Conflict(
+            "Either ticket_id or event_id must be provided".to_string(),
+        ));
+    }
+
+    let order = Order::create(
+        &state.db,
+        data.user_id,
+        data.ticket_id,
+        data.event_id,
+        &data.status,
+    )
+    .await?;
 
     // Generate QR code for the order
     let qr_code = QrService::generate_order_qr(order.id, order.user_id)
@@ -23,6 +35,7 @@ pub async fn create_order(
         "id": order.id,
         "user_id": order.user_id,
         "ticket_id": order.ticket_id,
+        "event_id": order.event_id,
         "status": order.status,
         "created_at": order.created_at,
         "qr_code": qr_code,
@@ -69,6 +82,7 @@ fn order_to_response(order: Order, qr_code: Option<String>) -> OrderResponse {
         id: order.id,
         user_id: order.user_id,
         ticket_id: order.ticket_id,
+        event_id: order.event_id,
         status: order.status,
         created_at: order.created_at,
         qr_code,

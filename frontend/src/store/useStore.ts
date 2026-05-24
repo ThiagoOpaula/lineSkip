@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { authApi, ticketsApi, ordersApi } from '@/lib/api';
+import { authApi, ticketsApi, ordersApi, eventsApi, EventResponse, OrderStatus } from '@/lib/api';
 
 interface User {
   id: number;
@@ -19,11 +19,14 @@ interface Ticket {
 interface Order {
   id: number;
   user_id: number;
-  ticket_id: number;
-  status: string;
+  ticket_id: number | null;
+  event_id: number | null;
+  status: OrderStatus;
   created_at: string;
   qr_code: string | null;
 }
+
+type Event = EventResponse;
 
 interface StoreState {
   // User state
@@ -33,6 +36,10 @@ interface StoreState {
   // Tickets state
   tickets: Ticket[];
   selectedTicket: Ticket | null;
+
+  // Events state
+  events: Event[];
+  selectedEvent: Event | null;
 
   // Orders state
   orders: Order[];
@@ -52,6 +59,10 @@ interface StoreState {
   selectTicket: (ticket: Ticket | null) => void;
   createTicket: (event_name: string, price: number) => Promise<void>;
 
+  fetchEvents: () => Promise<void>;
+  selectEvent: (event: Event | null) => void;
+  createOrderForEvent: (event_id: number) => Promise<Order>;
+
   fetchOrders: () => Promise<void>;
   selectOrder: (order: Order | null) => void;
   createOrder: (ticket_id: number) => Promise<Order>;
@@ -68,6 +79,8 @@ export const useStore = create<StoreState>()(
       isAuthenticated: false,
       tickets: [],
       selectedTicket: null,
+      events: [],
+      selectedEvent: null,
       orders: [],
       selectedOrder: null,
       isLoading: false,
@@ -129,6 +142,37 @@ export const useStore = create<StoreState>()(
           set({ tickets: [...get().tickets, result.data], isLoading: false });
         } catch (error) {
           set({ error: 'Failed to create ticket', isLoading: false });
+          throw error;
+        }
+      },
+
+      // Event actions
+      fetchEvents: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          const result = await eventsApi.getAll();
+          if (result.error) throw new Error(result.error);
+          set({ events: result.data || [], isLoading: false });
+        } catch (error) {
+          set({ error: 'Failed to fetch events', isLoading: false });
+        }
+      },
+
+      selectEvent: (event) => set({ selectedEvent: event }),
+
+      createOrderForEvent: async (event_id: number) => {
+        const { user } = get();
+        if (!user) throw new Error('User not authenticated');
+
+        set({ isLoading: true, error: null });
+        try {
+          const result = await ordersApi.create({ user_id: user.id, event_id, status: 'pending' });
+          if (result.error) throw new Error(result.error);
+          const orders = [...get().orders, result.data];
+          set({ orders, isLoading: false });
+          return result.data;
+        } catch (error) {
+          set({ error: 'Failed to create order', isLoading: false });
           throw error;
         }
       },
