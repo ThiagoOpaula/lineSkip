@@ -19,7 +19,23 @@ This is a full-stack web application built using Next.js for the frontend and Ru
 3. Start the development server with `npm run dev`.
 4. Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
 
-![schematic preview](readme-images/schema-frontend.excalidraw.svg)
+```mermaid
+flowchart LR
+    User[User] --> UI[Next.js UI Components]
+
+    subgraph Frontend
+        UI --> State[State Management<br/>Zustand]
+
+        UI --> Pages[Next.js Pages<br/>Home / Auth / Dashboard<br/>Tickets / Orders]
+
+        Pages --> API[API Integration Layer<br/>api.ts]
+
+        Components[Reusable Components<br/>AuthForm / TicketList<br/>OrderList / PaymentForm]
+        UI --> Components
+
+        API --> Backend[Backend API /api]
+    end
+```
 
 ### Backend
 
@@ -28,7 +44,27 @@ This is a full-stack web application built using Next.js for the frontend and Ru
 3. Start the backend server with `cargo run`.
 4. The backend API will be available at [http://localhost:8000/api](http://localhost:8000/api).
 
-![schematic preview](readme-images/schema-backend.excalidraw.svg)
+
+```mermaid
+flowchart LR
+    Client[Client / Frontend] --> API[Axum API]
+
+    subgraph Backend
+        API --> Auth[User Authentication<br/>JWT]
+        API --> Ticket[Ticket Management<br/>CRUD]
+        API --> Order[Order Processing]
+        API --> Payment[Payment Handling]
+        API --> QR[QR Code / Confirmation Generation]
+
+        API --> ORM[SQLx]
+        ORM --> DB[(PostgreSQL)]
+
+        API --> Cache[(Redis Cache)]
+
+        Security[HTTPS + JWT Security]
+        Security --> API
+    end
+```
 
 ## Bruno API
 
