@@ -66,11 +66,11 @@ backend/
 │   ├── state.rs         # AppState { db: PgPool, cache: CacheService }
 │   └── utils/
 │       └── hash.rs      # Argon2 password hashing
-├── migrations/          # SQLx migrations
-│   ├── *createUsersTable.up.sql
-│   ├── *updateUsersTable.up.sql   # adds email, password columns
-│   ├── *createTicketsTable.up.sql
-│   └── *createOrdersTable.up.sql
+├── migrations/          # SQLx migrations (run in timestamp order)
+│   ├── *create_users_table.*       # users: id, username, email, password_hash
+│   ├── *create_events_table.*      # events: id, name, description, date, price, total_tickets
+│   ├── *create_tickets_table.*     # tickets: id, user_id→users, event_name, price, created_at
+│   └── *create_orders_table.*      # orders: id, user_id→users, ticket_id→tickets, event_id→events, status(enum)
 └── tests/
     └── api.rs           # Integration tests (router-level, missing Extension → 500)
 ```

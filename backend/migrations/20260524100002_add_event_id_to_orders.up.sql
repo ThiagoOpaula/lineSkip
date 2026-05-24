@@ -1,2 +1,0 @@
-ALTER TABLE orders ADD COLUMN event_id INTEGER REFERENCES events(id);
-ALTER TABLE orders ALTER COLUMN ticket_id DROP NOT NULL;
