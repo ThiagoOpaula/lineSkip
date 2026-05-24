@@ -2,10 +2,6 @@
 
 "Lineskip" is a web application that allows users to purchase food tickets online and skip the ticket line. Built with Next.js for the frontend and Rust with Axum for the backend, this app streamlines the food ordering process by letting users go directly to the food line after purchasing a ticket. Efficient, fast, and convenient!
 
-## AI Development
-
-This project was developed using **Claude with Xiaomi Mimo-v2 models** for code generation and assistance.
-
 # Project Overview
 
 This is a full-stack web application built using Next.js for the frontend and Rust with Axum for the backend. The project appears to be a ticketing system, allowing users to create and manage tickets, as well as place orders.
