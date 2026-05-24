@@ -1,5 +1,8 @@
+use axum::http::HeaderValue;
 use axum::Extension;
 use lineskip_backend::{db, routes, state};
+use std::env;
+use tower_http::cors::CorsLayer;
 use tower_http::trace::{self, TraceLayer};
 use tracing::Level;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
@@ -17,8 +20,18 @@ async fn main() {
 
     let pool = db::connection::establish_connection().await;
     let app_state = state::AppState::new(pool).await;
+    let cors = if let Ok(frontend_url) = env::var("FRONTEND_URL") {
+        CorsLayer::new()
+            .allow_origin(HeaderValue::from_str(&frontend_url).unwrap())
+            .allow_methods(tower_http::cors::Any)
+            .allow_headers(tower_http::cors::Any)
+    } else {
+        CorsLayer::permissive()
+    };
+
     let app = routes::api::create_router()
         .layer(Extension(app_state))
+        .layer(cors)
         .layer(
             TraceLayer::new_for_http()
                 .make_span_with(trace::DefaultMakeSpan::new().level(Level::INFO))

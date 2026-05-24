@@ -1,10 +1,23 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useStore } from '@/store/useStore';
 import { Ticket, Package, Shield, Clock } from 'lucide-react';
 
 export default function Home() {
+  const router = useRouter();
   const { isAuthenticated } = useStore();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/dashboard');
+    }
+  }, [isAuthenticated, router]);
+
+  if (isAuthenticated) {
+    return null;
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
