@@ -11,7 +11,9 @@
       "Bash(sqlx migrate *)",
       "Bash(sqlx database *)",
       "Bash(cargo run *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(git add *)",
+      "Bash(git push *)"
     ]
   }
 }
