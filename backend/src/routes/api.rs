@@ -4,7 +4,7 @@ use axum::{
 };
 
 use crate::handlers::{
-    auth::{login, register},
+    auth::{get_me, login, register},
     events::{create_event, get_event, get_events},
     orders::{create_order, get_order, get_orders},
     payment::process_payment,
@@ -28,6 +28,7 @@ fn auth_routes() -> Router {
     Router::new()
         .route("/login", post(login))
         .route("/register", post(register))
+        .route("/me", get(get_me))
 }
 
 fn event_routes() -> Router {

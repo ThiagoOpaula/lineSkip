@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/store/useStore';
+import { authApi } from '@/lib/api';
 import { Home, Ticket, Package, LayoutDashboard, LogOut, User, Calendar } from 'lucide-react';
 
 export default function Navigation() {
@@ -18,6 +19,18 @@ export default function Navigation() {
     }
     return unsub;
   }, []);
+
+  // Verify persisted user still exists in the database
+  useEffect(() => {
+    if (hydrated && user && isAuthenticated) {
+      authApi.me(user.id).then((res) => {
+        if (res.error) {
+          logout();
+          router.push('/auth');
+        }
+      });
+    }
+  }, [hydrated]);
 
   if (!hydrated) {
     return (

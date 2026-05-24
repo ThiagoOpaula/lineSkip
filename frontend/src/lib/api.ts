@@ -89,6 +89,9 @@ export const authApi = {
       method: 'POST',
       body: JSON.stringify({ username, password, email }),
     }),
+
+  me: (user_id: number) =>
+    apiRequest<UserResponse>(`/auth/me?user_id=${user_id}`),
 };
 
 // Ticket endpoints
